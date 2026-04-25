@@ -1,0 +1,74 @@
+Ejecución: npx wrangler dev --remote --port 8788 2>&1
+
+Desarrollo local (wrangler local)
+cd w:\DESARROLLLO\estetica\esteticaBack
+pnpm wrangler d1 migrations apply NOMBRE_BD --local
+
+# Producción (Cloudflare D1)
+pnpm wrangler d1 migrations apply NOMBRE_BD
+
+# migraciones pendientes
+pnpm wrangler d1 migrations list NOMBRE_BD --local
+
+# backend en desarrollo
+cd w:\DESARROLLLO\estetica\esteticaBack
+pnpm wrangler dev
+
+/////////////////////////////////////////////////////////////////////////
+
+
+
+
+Pasos para agregar tablas/columnas en esteticaBack (Drizzle + D1)
+1. Agregar una nueva tabla
+Crea un archivo en src/db/schema/<carpeta>/nueva_tabla.ts:
+
+typescript
+import { int, sqliteTable, text } from "drizzle-orm/sqlite-core";
+ 
+export const cat_ejemplo = sqliteTable("cat_ejemplo", {
+  id: int().primaryKey({ autoIncrement: true }),
+  nombre: text().notNull(),
+  descripcion: text(),
+  estatus: int().default(1),
+});
+Registra la exportación en @/src/db/schema/index.ts:
+
+typescript
+export * from "./catalogos/nueva_tabla";  // En la sección apropiada
+2. Agregar columna a tabla existente
+Edita el archivo de la tabla y añade el campo:
+
+typescript
+export const cat_sucursales = sqliteTable("cat_sucursales", {
+  id: int().primaryKey({ autoIncrement: true }),
+  nombre: text().notNull(),
+  nueva_columna: text(),  // <-- Nueva columna
+});
+3. Generar migración
+bash
+cd w:\DESARROLLLO\estetica\esteticaBack
+pnpm drizzle-kit generate
+Esto crea un nuevo archivo SQL en drizzle/XXXX_nombre.sql.
+
+4. Aplicar migración a D1 (desarrollo local)
+bash
+pnpm wrangler d1 migrations apply <nombre-bd> --local
+Para producción (requiere token):
+
+bash
+pnpm wrangler d1 migrations apply <nombre-bd>
+Estructura de carpetas actual
+catalogos/ — Tablas maestras (sucursales, clientes, productos, etc.)
+seguridad/ — Perfiles, módulos, permisos
+agenda/ — Citas, notificaciones
+ventas/ — Transacciones de venta
+inventario/ — Movimientos de inventario
+nomina/ — Comisiones, pagos
+Tipos de datos SQLite disponibles
+Drizzle	SQL
+int()	INTEGER
+real()	REAL
+text()	TEXT
+blob()	BLOB
+integer({ mode: 'boolean' })	BOOLEA 
