@@ -1,0 +1,10 @@
+name = "estetica"
+main = "src/index.ts"
+compatibility_date = "2024-09-23"
+compatibility_flags = ["nodejs_compat"]
+
+[[ d1_databases ]]
+binding = "DB"
+database_name = "estetica"
+database_id = "d22b2a48-0c1c-4c36-ad19-e9d169732bff"
+migrations_dir = "drizzle"
